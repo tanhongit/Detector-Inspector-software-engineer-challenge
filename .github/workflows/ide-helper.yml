@@ -1,0 +1,45 @@
+name: Generate IDE Helper
+
+on: [push]
+
+permissions:
+  contents: write
+
+jobs:
+  ide-helper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+          extensions: pdo_sqlite
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Generate IDE helper files
+        run: |
+          # Skip database-related checks
+          touch database/database.sqlite
+          export DB_CONNECTION=sqlite
+          export DB_DATABASE=$(pwd)/database/database.sqlite
+          
+          # Generate helper files
+          php artisan ide-helper:generate
+          php artisan ide-helper:models -W
+          php artisan ide-helper:eloquent
+          vendor/bin/pint
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update IDE helper files"
