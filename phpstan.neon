@@ -1,0 +1,15 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 7
+    paths:
+        - app
+        - config
+        - database
+        - routes
+    parallel:
+        maximumNumberOfProcesses: 4
+    tmpDir: build/phpstan
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false

@@ -1,0 +1,57 @@
+parameters:
+    ignoreErrors:
+        - message: '#Parameter \#2 \$message of function abort expects string, array\|string\|null given.#'
+          path: '*.php'
+          
+        - message: '#Method .*::messages\(\) should return array<string, string> but returns array<string, array\|string\|null>.#'
+          path: '*.php'
+
+        - message: '#Call to an undefined method Illuminate\\Database\\Schema\\IndexDefinition::where\(\)#'
+          path: 'database/migrations/*.php'
+
+        - message: '#PHPDoc tag @mixin contains unknown class Eloquent.#'
+          path: '*'
+
+        - message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder#'
+          path: '*'
+
+        - message: '#Call to an undefined method Illuminate\\Database\\Query\\Builder#'
+          path: '*'
+
+        - message: '#Cannot cast .* to string#'
+          path: '*'
+
+        -
+          path: 'app/Providers/AppServiceProvider.php'
+          identifier: offsetAccess.nonOffsetAccessible
+
+        - message: '#Cannot cast .* to int#'
+          path: '*'
+
+        - message: '#Cannot cast array\|string to string#'
+          path: '*'
+
+        - message: '#Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany<.*> in PHPDoc tag @return does not specify all template types of class#'
+          path: app/Models/*.php
+
+        - message: '#Call to an undefined static method App\\\\Models\\\\\\.*::factory\(\)#'
+          path: 'database/factories/*.php'
+
+        -
+          identifier: missingType.generics
+
+        - message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany<.*>::(published|scheduled)\(\)#'
+          path: '*.php'
+
+        - message: '#Call to an undefined method .*::(active|limit|first|firstOrFail|pluck|inRandomOrder|getAttribute)\(\)#'
+          path: '*.php'
+
+        - message: '#Cannot call method .*\(\) on array\\|Illuminate\\Routing\\Route#'
+          path: 'routes/web.php'
+
+        - message: '#PHPDoc tag @property-read for property .* contains unknown class Eloquent.#'
+          path: '*.php'
+
+        -
+          identifier: staticMethod.notFound
+
