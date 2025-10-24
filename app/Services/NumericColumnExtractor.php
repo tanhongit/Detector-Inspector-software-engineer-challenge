@@ -18,8 +18,8 @@ class NumericColumnExtractor
     /**
      * Identify which columns in the table contain primarily numeric data
      *
-     * @param  array  $tableData  2D array representing table data
-     * @return array Array of column indices that contain numeric data
+     * @param  array<int, array<int, string>>  $tableData  2D array representing table data
+     * @return array<int, int> Array of column indices that contain numeric data
      */
     public function identifyNumericColumns(array $tableData): array
     {
@@ -60,9 +60,9 @@ class NumericColumnExtractor
     /**
      * Extract numeric values from a specific column
      *
-     * @param  array  $tableData  2D array representing table data
+     * @param  array<int, array<int, string>>  $tableData  2D array representing table data
      * @param  int  $columnIndex  The index of the column to extract
-     * @return array Array of numeric values
+     * @return array<int, float> Array of numeric values
      */
     public function extractColumnValues(array $tableData, int $columnIndex): array
     {
@@ -94,7 +94,7 @@ class NumericColumnExtractor
         // Remove common non-numeric characters but keep decimal points and negative signs
         $cleaned = preg_replace('/[^\d.\-]/', '', $value);
 
-        return is_numeric($cleaned) && $cleaned !== '';
+        return $cleaned !== null && $cleaned !== '' && is_numeric($cleaned);
     }
 
     /**
@@ -108,7 +108,7 @@ class NumericColumnExtractor
         // Remove common non-numeric characters (commas, spaces, etc.)
         $cleaned = preg_replace('/[^\d.\-]/', '', $value);
 
-        if (is_numeric($cleaned) && $cleaned !== '') {
+        if ($cleaned !== null && $cleaned !== '' && is_numeric($cleaned)) {
             return (float) $cleaned;
         }
 

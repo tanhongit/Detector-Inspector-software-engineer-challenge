@@ -59,7 +59,14 @@ class WikipediaGraphCommand extends Command
     public function handle(): int
     {
         $url = $this->argument('url');
-        $outputPath = $this->option('output') ?? storage_path('app/graph.png');
+        if (! is_string($url)) {
+            $this->error('URL argument must be a string');
+            return self::FAILURE;
+        }
+
+        $outputPath = $this->option('output');
+        $outputPath = is_string($outputPath) ? $outputPath : storage_path('app/graph.png');
+        
         $specificColumn = $this->option('column');
 
         $this->info("Fetching Wikipedia page: {$url}");

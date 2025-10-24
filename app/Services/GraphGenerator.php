@@ -31,7 +31,7 @@ class GraphGenerator
     /**
      * Generate a line graph from numeric data and save it as an image
      *
-     * @param  array  $data  Array of numeric values to plot
+     * @param  array<int, float|int>  $data  Array of numeric values to plot
      * @param  string  $outputPath  Path where the image should be saved
      * @param  string  $title  Optional title for the graph
      * @return bool True if successful, false otherwise
@@ -74,6 +74,8 @@ class GraphGenerator
 
     /**
      * Draw grid lines on the graph
+     *
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
      */
     private function drawGrid($image): void
     {
@@ -105,6 +107,8 @@ class GraphGenerator
 
     /**
      * Draw X and Y axes
+     *
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
      */
     private function drawAxes($image): void
     {
@@ -130,6 +134,8 @@ class GraphGenerator
 
     /**
      * Draw the title of the graph
+     *
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
      */
     private function drawTitle($image, string $title): void
     {
@@ -144,6 +150,9 @@ class GraphGenerator
 
     /**
      * Draw the data points and lines
+     *
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  array<int, float|int>  $data
      */
     private function drawData($image, array $data): void
     {
@@ -151,6 +160,10 @@ class GraphGenerator
         $plotHeight = self::HEIGHT - (2 * self::PADDING);
 
         $count = count($data);
+        if ($count === 0) {
+            return;
+        }
+        
         $min = min($data);
         $max = max($data);
         $range = $max - $min;
@@ -191,9 +204,16 @@ class GraphGenerator
 
     /**
      * Draw axis labels
+     *
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  array<int, float|int>  $data
      */
     private function drawLabels($image, array $data): void
     {
+        if (empty($data)) {
+            return;
+        }
+        
         $plotHeight = self::HEIGHT - (2 * self::PADDING);
         $min = min($data);
         $max = max($data);

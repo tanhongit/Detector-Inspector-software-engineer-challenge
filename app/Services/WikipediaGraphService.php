@@ -14,16 +14,20 @@ class WikipediaGraphService
         public GraphGenerator $generator
     ) {}
 
+    /**
+     * @return array{path: string, url: string, full_path: string, columns: array<int, int>, table_info: array{rows: int, columns: int}}
+     */
     public function generateGraph(string $url): array
     {
-        $tables = $this->scraper->fetchTables($url);
+        $html = $this->scraper->fetchPage($url);
+        $tables = $this->scraper->extractTables($html);
 
         if (empty($tables)) {
             throw new \Exception('No tables found on the Wikipedia page.');
         }
 
         $firstTable = $tables[0];
-        $numericColumns = $this->extractor->extract($firstTable);
+        $numericColumns = $this->extractor->identifyNumericColumns($firstTable);
 
         if (empty($numericColumns)) {
             throw new \Exception('No numeric columns found in the first table.');
@@ -37,7 +41,15 @@ class WikipediaGraphService
             mkdir($directory, 0755, true);
         }
 
-        $this->generator->generate($firstTable, $numericColumns, $fullPath);
+        $columnIndex = array_key_first($numericColumns);
+        if ($columnIndex === null) {
+            throw new \Exception('No numeric columns available.');
+        }
+        
+        $values = $this->extractor->extractColumnValues($firstTable, $columnIndex);
+        $title = $firstTable[0][$columnIndex] ?? 'Graph';
+        
+        $this->generator->generateGraph($values, $fullPath, $title);
 
         return [
             'path' => $outputPath,
@@ -51,6 +63,9 @@ class WikipediaGraphService
         ];
     }
 
+    /**
+     * @return array<int, array{path: string, url: string, created_at: int}>
+     */
     public function getAllGraphs(): array
     {
         $files = Storage::disk('public')->files('graphs');
