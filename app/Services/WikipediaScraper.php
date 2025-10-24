@@ -47,7 +47,7 @@ class WikipediaScraper
      * Extract all tables from HTML content
      *
      * @param  string  $html  The HTML content to parse
-     * @return array Array of table data (each table is a 2D array)
+     * @return array<int, array<int, array<int, string>>> Array of table data (each table is a 2D array)
      */
     public function extractTables(string $html): array
     {
