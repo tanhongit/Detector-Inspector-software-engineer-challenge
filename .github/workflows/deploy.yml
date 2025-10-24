@@ -1,0 +1,24 @@
+name: Deploy Test Server
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy to Remote Host
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          password: ${{ secrets.REMOTE_PASS }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            - cd ~/Detector-Inspector-software-engineer-challenge
+            - git pull origin main
+            - composer install --no-interaction --no-progress --no-suggest --optimize-aut
+            - php artisan migrate --force
+            - php artisan optimize:clear
