@@ -2,33 +2,38 @@
 
 namespace App\Services;
 
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 /**
  * GraphGenerator Service
  *
  * Responsible for generating line graph images from numeric data
- *
- * @package App\Services
  */
 class GraphGenerator
 {
     private const WIDTH = 800;
+
     private const HEIGHT = 600;
+
     private const PADDING = 60;
+
     private const BACKGROUND_COLOR = '#ffffff';
+
     private const GRID_COLOR = '#e0e0e0';
+
     private const AXIS_COLOR = '#333333';
+
     private const LINE_COLOR = '#2563eb';
+
     private const POINT_COLOR = '#dc2626';
 
     /**
      * Generate a line graph from numeric data and save it as an image
      *
-     * @param array $data Array of numeric values to plot
-     * @param string $outputPath Path where the image should be saved
-     * @param string $title Optional title for the graph
+     * @param  array  $data  Array of numeric values to plot
+     * @param  string  $outputPath  Path where the image should be saved
+     * @param  string  $title  Optional title for the graph
      * @return bool True if successful, false otherwise
      */
     public function generateGraph(array $data, string $outputPath, string $title = 'Numeric Data Visualization'): bool
@@ -40,12 +45,12 @@ class GraphGenerator
 
         // Validate output directory
         $directory = dirname($outputPath);
-        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+        if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
             return false;
         }
 
         try {
-            $manager = new ImageManager(new Driver());
+            $manager = new ImageManager(new Driver);
             $image = $manager->create(self::WIDTH, self::HEIGHT);
 
             // Fill background
@@ -79,8 +84,8 @@ class GraphGenerator
         for ($i = 0; $i <= 10; $i++) {
             $x = self::PADDING + ($plotWidth / 10) * $i;
             $image->drawLine(function ($line) use ($x, $plotHeight) {
-                $line->from((int)$x, self::PADDING);
-                $line->to((int)$x, self::PADDING + $plotHeight);
+                $line->from((int) $x, self::PADDING);
+                $line->to((int) $x, self::PADDING + $plotHeight);
                 $line->color(self::GRID_COLOR);
                 $line->width(1);
             });
@@ -90,8 +95,8 @@ class GraphGenerator
         for ($i = 0; $i <= 10; $i++) {
             $y = self::PADDING + ($plotHeight / 10) * $i;
             $image->drawLine(function ($line) use ($y, $plotWidth) {
-                $line->from(self::PADDING, (int)$y);
-                $line->to(self::PADDING + $plotWidth, (int)$y);
+                $line->from(self::PADDING, (int) $y);
+                $line->to(self::PADDING + $plotWidth, (int) $y);
                 $line->color(self::GRID_COLOR);
                 $line->width(1);
             });
@@ -167,8 +172,8 @@ class GraphGenerator
         // Draw lines between points
         for ($i = 0; $i < count($points) - 1; $i++) {
             $image->drawLine(function ($line) use ($points, $i) {
-                $line->from((int)$points[$i]['x'], (int)$points[$i]['y']);
-                $line->to((int)$points[$i + 1]['x'], (int)$points[$i + 1]['y']);
+                $line->from((int) $points[$i]['x'], (int) $points[$i]['y']);
+                $line->to((int) $points[$i + 1]['x'], (int) $points[$i + 1]['y']);
                 $line->color(self::LINE_COLOR);
                 $line->width(3);
             });
@@ -176,7 +181,7 @@ class GraphGenerator
 
         // Draw points
         foreach ($points as $point) {
-            $image->drawCircle((int)$point['x'], (int)$point['y'], function ($circle) {
+            $image->drawCircle((int) $point['x'], (int) $point['y'], function ($circle) {
                 $circle->radius(5);
                 $circle->background(self::POINT_COLOR);
                 $circle->border(self::BACKGROUND_COLOR, 2);
@@ -198,7 +203,7 @@ class GraphGenerator
             $value = $min + (($max - $min) / 5) * (5 - $i);
             $y = self::PADDING + ($plotHeight / 5) * $i;
 
-            $image->text(number_format($value, 2), self::PADDING - 10, (int)$y, function ($font) {
+            $image->text(number_format($value, 2), self::PADDING - 10, (int) $y, function ($font) {
                 $font->size(12);
                 $font->color(self::AXIS_COLOR);
                 $font->align('right');
@@ -213,7 +218,7 @@ class GraphGenerator
 
         for ($i = 0; $i < $count; $i += $step) {
             $x = self::PADDING + ((self::WIDTH - 2 * self::PADDING) / max(1, $count - 1)) * $i;
-            $image->text((string)($i + 1), (int)$x, self::HEIGHT - self::PADDING + 20, function ($font) {
+            $image->text((string) ($i + 1), (int) $x, self::HEIGHT - self::PADDING + 20, function ($font) {
                 $font->size(12);
                 $font->color(self::AXIS_COLOR);
                 $font->align('center');

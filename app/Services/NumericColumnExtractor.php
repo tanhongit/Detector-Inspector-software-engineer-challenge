@@ -7,8 +7,6 @@ namespace App\Services;
  *
  * Responsible for identifying numeric columns in table data
  * and extracting numeric values
- *
- * @package App\Services
  */
 class NumericColumnExtractor
 {
@@ -20,7 +18,7 @@ class NumericColumnExtractor
     /**
      * Identify which columns in the table contain primarily numeric data
      *
-     * @param array $tableData 2D array representing table data
+     * @param  array  $tableData  2D array representing table data
      * @return array Array of column indices that contain numeric data
      */
     public function identifyNumericColumns(array $tableData): array
@@ -62,8 +60,8 @@ class NumericColumnExtractor
     /**
      * Extract numeric values from a specific column
      *
-     * @param array $tableData 2D array representing table data
-     * @param int $columnIndex The index of the column to extract
+     * @param  array  $tableData  2D array representing table data
+     * @param  int  $columnIndex  The index of the column to extract
      * @return array Array of numeric values
      */
     public function extractColumnValues(array $tableData, int $columnIndex): array
@@ -88,21 +86,22 @@ class NumericColumnExtractor
     /**
      * Check if a value is numeric (allowing for various formats)
      *
-     * @param string $value The value to check
+     * @param  string  $value  The value to check
      * @return bool True if the value is numeric
      */
     private function isNumeric(string $value): bool
     {
         // Remove common non-numeric characters but keep decimal points and negative signs
         $cleaned = preg_replace('/[^\d.\-]/', '', $value);
+
         return is_numeric($cleaned) && $cleaned !== '';
     }
 
     /**
      * Parse a string value into a numeric value
      *
-     * @param string $value The value to parse
-     * @return float|null The numeric value or null if not numeric
+     * @param  string  $value  The value to parse
+     * @return null|float The numeric value or null if not numeric
      */
     private function parseNumericValue(string $value): ?float
     {
@@ -116,4 +115,3 @@ class NumericColumnExtractor
         return null;
     }
 }
-

@@ -7,20 +7,21 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test suite for GraphGenerator service
- * 
+ *
  * Tests the ability to generate graph images from numeric data
  */
 class GraphGeneratorTest extends TestCase
 {
     private GraphGenerator $generator;
+
     private string $tempDir;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->generator = new GraphGenerator();
-        $this->tempDir = sys_get_temp_dir() . '/graph_tests';
-        if (!is_dir($this->tempDir)) {
+        $this->generator = new GraphGenerator;
+        $this->tempDir = sys_get_temp_dir().'/graph_tests';
+        if (! is_dir($this->tempDir)) {
             mkdir($this->tempDir, 0755, true);
         }
     }
@@ -29,7 +30,7 @@ class GraphGeneratorTest extends TestCase
     {
         // Cleanup temp files
         if (is_dir($this->tempDir)) {
-            $files = glob($this->tempDir . '/*');
+            $files = glob($this->tempDir.'/*');
             foreach ($files as $file) {
                 if (is_file($file)) {
                     unlink($file);
@@ -46,10 +47,10 @@ class GraphGeneratorTest extends TestCase
     public function test_it_can_generate_graph(): void
     {
         $data = [1.5, 2.0, 2.5, 3.0, 3.5];
-        $outputPath = $this->tempDir . '/test_graph.png';
+        $outputPath = $this->tempDir.'/test_graph.png';
 
         $result = $this->generator->generateGraph($data, $outputPath);
-        
+
         $this->assertTrue($result);
         $this->assertFileExists($outputPath);
     }
@@ -60,10 +61,10 @@ class GraphGeneratorTest extends TestCase
     public function test_it_handles_empty_data(): void
     {
         $data = [];
-        $outputPath = $this->tempDir . '/empty_graph.png';
+        $outputPath = $this->tempDir.'/empty_graph.png';
 
         $result = $this->generator->generateGraph($data, $outputPath);
-        
+
         $this->assertFalse($result);
     }
 
@@ -76,7 +77,7 @@ class GraphGeneratorTest extends TestCase
         $outputPath = '/invalid/path/that/does/not/exist/graph.png';
 
         $result = $this->generator->generateGraph($data, $outputPath);
-        
+
         $this->assertFalse($result);
     }
 }

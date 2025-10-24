@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 /**
  * Feature test for Wikipedia Graph Generator
@@ -31,7 +31,7 @@ class WikipediaGraphGeneratorTest extends TestCase
         // When: We run the command to generate a graph
         $this->artisan('wikipedia:graph', [
             'url' => $url,
-            '--output' => storage_path('app/test_output.png')
+            '--output' => storage_path('app/test_output.png'),
         ])
             // Then: The command should succeed
             ->assertExitCode(0);
@@ -45,4 +45,3 @@ class WikipediaGraphGeneratorTest extends TestCase
         }
     }
 }
-

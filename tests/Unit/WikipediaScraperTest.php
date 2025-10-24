@@ -17,7 +17,7 @@ class WikipediaScraperTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->scraper = new WikipediaScraper();
+        $this->scraper = new WikipediaScraper;
     }
 
     /**
@@ -56,4 +56,3 @@ class WikipediaScraperTest extends TestCase
         $this->assertEmpty($tables);
     }
 }
-

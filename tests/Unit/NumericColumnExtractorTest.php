@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test suite for NumericColumnExtractor service
- * 
+ *
  * Tests the ability to identify and extract numeric columns from tables
  */
 class NumericColumnExtractorTest extends TestCase
@@ -17,7 +17,7 @@ class NumericColumnExtractorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->extractor = new NumericColumnExtractor();
+        $this->extractor = new NumericColumnExtractor;
     }
 
     /**
@@ -29,11 +29,11 @@ class NumericColumnExtractorTest extends TestCase
             ['Name', 'Age', 'City'],
             ['John', '25', 'New York'],
             ['Jane', '30', 'London'],
-            ['Bob', '35', 'Paris']
+            ['Bob', '35', 'Paris'],
         ];
 
         $numericColumns = $this->extractor->identifyNumericColumns($tableData);
-        
+
         $this->assertIsArray($numericColumns);
         $this->assertContains(1, $numericColumns); // Age column index
     }
@@ -47,11 +47,11 @@ class NumericColumnExtractorTest extends TestCase
             ['Name', 'Height'],
             ['Record 1', '1.83'],
             ['Record 2', '1.91'],
-            ['Record 3', '2.09']
+            ['Record 3', '2.09'],
         ];
 
         $values = $this->extractor->extractColumnValues($tableData, 1);
-        
+
         $this->assertIsArray($values);
         $this->assertEquals([1.83, 1.91, 2.09], $values);
     }
@@ -65,13 +65,12 @@ class NumericColumnExtractorTest extends TestCase
             ['Name', 'Score'],
             ['Test 1', '100'],
             ['Test 2', 'N/A'],
-            ['Test 3', '85.5']
+            ['Test 3', '85.5'],
         ];
 
         $values = $this->extractor->extractColumnValues($tableData, 1);
-        
+
         $this->assertIsArray($values);
         $this->assertCount(2, $values);
     }
 }
-

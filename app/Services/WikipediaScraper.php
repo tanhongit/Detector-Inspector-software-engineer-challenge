@@ -9,8 +9,6 @@ use Symfony\Component\DomCrawler\Crawler;
  * WikipediaScraper Service
  *
  * Responsible for fetching Wikipedia pages and extracting table data
- *
- * @package App\Services
  */
 class WikipediaScraper
 {
@@ -22,31 +20,33 @@ class WikipediaScraper
             'timeout' => 30,
             'headers' => [
                 'User-Agent' => 'Mozilla/5.0 (compatible; WikipediaTableScraper/1.0)',
-            ]
+            ],
         ]);
     }
 
     /**
      * Fetch the HTML content of a Wikipedia page
      *
-     * @param string $url The URL of the Wikipedia page
+     * @param  string  $url  The URL of the Wikipedia page
      * @return string The HTML content
+     *
      * @throws \Exception If the page cannot be fetched
      */
     public function fetchPage(string $url): string
     {
         try {
             $response = $this->httpClient->get($url);
+
             return (string) $response->getBody();
         } catch (\Exception $e) {
-            throw new \Exception("Failed to fetch Wikipedia page: " . $e->getMessage());
+            throw new \Exception('Failed to fetch Wikipedia page: '.$e->getMessage());
         }
     }
 
     /**
      * Extract all tables from HTML content
      *
-     * @param string $html The HTML content to parse
+     * @param  string  $html  The HTML content to parse
      * @return array Array of table data (each table is a 2D array)
      */
     public function extractTables(string $html): array
@@ -71,12 +71,12 @@ class WikipediaScraper
                     $rowData[] = $text;
                 });
 
-                if (!empty($rowData)) {
+                if (! empty($rowData)) {
                     $tableData[] = $rowData;
                 }
             });
 
-            if (!empty($tableData)) {
+            if (! empty($tableData)) {
                 $tables[] = $tableData;
             }
         });
@@ -84,4 +84,3 @@ class WikipediaScraper
         return $tables;
     }
 }
-
