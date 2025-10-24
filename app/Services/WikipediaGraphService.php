@@ -54,7 +54,7 @@ class WikipediaGraphService
     public function getAllGraphs(): array
     {
         $files = Storage::disk('public')->files('graphs');
-        
+
         return array_map(function ($file) {
             return [
                 'path' => $file,

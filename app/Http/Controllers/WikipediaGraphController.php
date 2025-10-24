@@ -18,7 +18,7 @@ class WikipediaGraphController extends Controller
     public function index(): View
     {
         $graphs = $this->service->getAllGraphs();
-        
+
         return view('wikipedia-graph.index', compact('graphs'));
     }
 
