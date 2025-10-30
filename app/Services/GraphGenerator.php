@@ -86,8 +86,6 @@ class GraphGenerator
 
     /**
      * Draw grid lines on the graph
-     *
-     * @param  ImageInterface  $image
      */
     private function drawGrid(ImageInterface $image): void
     {
@@ -119,8 +117,6 @@ class GraphGenerator
 
     /**
      * Draw X and Y axes
-     *
-     * @param  ImageInterface  $image
      */
     private function drawAxes(ImageInterface $image): void
     {
@@ -262,7 +258,6 @@ class GraphGenerator
     /**
      * Draw axis labels (X and Y axis descriptions)
      *
-     * @param  ImageInterface  $image
      * @param  string  $xAxisLabel  Label for X-axis
      * @param  string  $yAxisLabel  Label for Y-axis
      */
@@ -344,8 +339,6 @@ class GraphGenerator
 
     /**
      * Draw legend explaining the graph elements
-     *
-     * @param  ImageInterface  $image
      */
     private function drawLegend(ImageInterface $image): void
     {
@@ -403,7 +396,6 @@ class GraphGenerator
     /**
      * Draw values next to data points for better clarity
      *
-     * @param  ImageInterface  $image
      * @param  array<int, float|int>  $data
      */
     private function drawDataPointValues(ImageInterface $image, array $data): void
