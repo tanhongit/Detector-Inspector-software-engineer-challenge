@@ -45,10 +45,10 @@ class WikipediaGraphService
         if ($columnIndex === null) {
             throw new \Exception('No numeric columns available.');
         }
-        
+
         $values = $this->extractor->extractColumnValues($firstTable, $columnIndex);
         $title = $firstTable[0][$columnIndex] ?? 'Graph';
-        
+
         $this->generator->generateGraph($values, $fullPath, $title);
 
         return [
