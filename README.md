@@ -157,6 +157,163 @@ The project includes comprehensive test coverage:
 ./vendor/bin/pint
 ```
 
+---
+
+## 🤖 GitHub Workflows (CI/CD)
+
+This project uses **5 GitHub Actions workflows** for automation and quality assurance:
+
+### 1. **Larastan (PHPStan)** 📊
+**File**: `.github/workflows/larastan.yml`
+
+**Trigger**: On every `push` and `pull_request`
+
+**Purpose**: Static code analysis to catch bugs before runtime
+
+**What it does**:
+- Runs on PHP 8.2, 8.3, and 8.4 (matrix testing)
+- Installs Composer dependencies
+- Runs PHPStan analysis with error reporting to GitHub
+- Ensures code quality and type safety
+
+**Command**: `composer analyse --error-format=github`
+
+**Matrix Strategy**: Tests across 3 PHP versions to ensure compatibility
+
+---
+
+### 2. **Laravel Pint (Code Formatting)** 🎨
+**File**: `.github/workflows/laravel-pint.yml`
+
+**Trigger**: On every `push`
+
+**Purpose**: Automatically fix code style issues
+
+**What it does**:
+- Checks out code from the current branch
+- Sets up PHP 8.4 with Composer
+- Installs dependencies
+- Runs Pint to fix code styling
+- Auto-commits formatting changes back to the branch
+
+**Command**: `vendor/bin/pint`
+
+**Auto-commit**: Uses `stefanzweifel/git-auto-commit-action@v5` with message "Fix styling"
+
+---
+
+### 3. **IDE Helper Generator** 💡
+**File**: `.github/workflows/ide-helper.yml`
+
+**Trigger**: On every `push`
+
+**Purpose**: Generate IDE helper files for better autocomplete and IntelliSense
+
+**What it does**:
+- Creates SQLite database for Laravel
+- Generates IDE helper files:
+  - `ide-helper:generate` - Core Laravel helpers
+  - `ide-helper:models -W` - Model docblocks
+  - `ide-helper:eloquent` - Eloquent helpers
+- Runs Pint to format generated files
+- Auto-commits helper files with message "chore: update IDE helper files"
+
+**Files Generated**: `_ide_helper.php` and model annotations
+
+---
+
+### 4. **Dependabot Auto-Merge** 🔄
+**File**: `.github/workflows/dependabot-auto-merge.yml`
+
+**Trigger**: On `pull_request_target` from Dependabot
+
+**Purpose**: Automatically merge safe dependency updates
+
+**What it does**:
+- Detects Dependabot PRs
+- Fetches update metadata (major/minor/patch)
+- Auto-merges:
+  - ✅ **Semver-minor** updates (new features, backward compatible)
+  - ✅ **Semver-patch** updates (bug fixes)
+  - ❌ **Semver-major** updates (breaking changes - requires manual review)
+
+**Safety**: Only acts on Dependabot PRs, not human-created PRs
+
+---
+
+### 5. **Deploy to Test Server** 🚀
+**File**: `.github/workflows/deploy.yml`
+
+**Trigger**: On `push` to `main` branch
+
+**Purpose**: Automatically deploy to remote test server
+
+**What it does**:
+- Uses self-hosted runner
+- SSH into remote server using secrets
+- Pulls latest code from `main` branch
+- Installs/updates Composer dependencies
+- Clears all Laravel caches
+- Runs database migrations
+- Rebuilds cache (config, routes, views)
+- Creates storage symlink
+
+**Deployment Steps**:
+1. `git pull origin main`
+2. `composer install --optimize-autoloader`
+3. Clear caches (compiled, cache, config, route, view)
+4. `php artisan migrate --force`
+5. Rebuild caches (config, route, view)
+6. `php artisan storage:link`
+
+**Secrets Required**:
+- `REMOTE_HOST` - Server hostname/IP
+- `REMOTE_USERNAME` - SSH username
+- `REMOTE_PASS` - SSH password
+- `SSH_PRIVATE_KEY` - SSH private key
+- `REMOTE_PORT` - SSH port
+
+---
+
+### 6. **Dependabot Configuration** 📦
+**File**: `.github/dependabot.yml`
+
+**Purpose**: Automatic dependency updates
+
+**What it does**:
+- Monitors GitHub Actions versions
+- Checks for updates **daily**
+- Creates PRs for outdated actions
+- Works with auto-merge workflow for safe updates
+
+**Ecosystem**: `github-actions`
+
+---
+
+## 🔐 Workflow Permissions
+
+### Write Permissions (Auto-commit workflows):
+- `laravel-pint.yml` - commits formatted code
+- `ide-helper.yml` - commits generated helper files
+- `dependabot-auto-merge.yml` - merges PRs
+
+### Read Permissions:
+- `larastan.yml` - only reads code, reports errors
+
+### Deploy Permissions:
+- `deploy.yml` - uses self-hosted runner with SSH access
+
+---
+
+## 🎯 Benefits of CI/CD Setup
+
+1. **Code Quality**: Automatic PHPStan checks on every commit
+2. **Consistent Formatting**: Pint auto-fixes code style
+3. **Better DX**: IDE helpers improve autocomplete
+4. **Up-to-date Dependencies**: Dependabot keeps dependencies current
+5. **Automated Deployment**: Push to main = auto-deploy to test server
+6. **Multi-version Testing**: Ensures PHP 8.2, 8.3, 8.4 compatibility
+
 ## 📝 Assumptions & Design Decisions
 
 ### Assumptions
