@@ -30,7 +30,7 @@ class WikipediaScraper
      * @param  string  $url  The URL of the Wikipedia page
      * @return string The HTML content
      *
-     * @throws \Exception If the page cannot be fetched
+     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException If the page cannot be fetched
      */
     public function fetchPage(string $url): string
     {

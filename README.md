@@ -343,41 +343,67 @@ This project uses **5 GitHub Actions workflows** for automation and quality assu
 - **Rotated Y-axis label** - Standard convention for vertical axis
 - **Centered labels** - Professional appearance
 
-## 📊 Graph Axis Labels Feature
+## 📊 Graph Features - Detailed & Informative
 
 ### Overview
-The graph generator includes clear, descriptive labels for both X-axis (horizontal) and Y-axis (vertical) to make visualizations professional and understandable.
+The graph generator creates **professional, detailed visualizations** with comprehensive information display including statistics, legend, data values, and clear axis labels.
 
-### Axis Label Details
+### 🎯 Key Features
 
-#### X-Axis Label (Horizontal)
+#### 1. Statistics Box (Top Right)
+- **Count**: Total number of data points
+- **Min**: Minimum value in dataset
+- **Max**: Maximum value in dataset
+- **Avg**: Average (mean) of all values
+- **Styling**: Semi-transparent white box with border
+- **Auto-calculated**: Statistics computed automatically from data
+
+#### 2. Legend (Below Statistics)
+- **Data Line**: Blue line explanation with sample
+- **Data Points**: Red point explanation with sample
+- **Purpose**: Helps users understand graph elements
+- **Styling**: Clean, concise visual guide
+
+#### 3. Data Point Values
+- **Display**: Actual numeric values shown above data points
+- **Smart Spacing**: Shows every nth point to avoid crowding
+- **Format**: 2 decimal places (e.g., "1.85")
+- **Color**: Gray (#666666) for subtle appearance
+- **Font**: 9pt for compact display
+
+#### 4. Axis Labels
+
+##### X-Axis Label (Horizontal)
 - **Label**: "Record Number"
 - **Position**: Centered at the bottom of the graph
 - **Purpose**: Indicates each point represents a sequential record from the Wikipedia table
 - **Styling**: 14pt font, centered alignment
 
-#### Y-Axis Label (Vertical)
+##### Y-Axis Label (Vertical)
 - **Label**: Column name from Wikipedia table header (e.g., "Height", "Mark", "Time")
 - **Position**: Left side of the graph, rotated 90 degrees
 - **Purpose**: Shows what measurement or value is being plotted
 - **Styling**: 14pt font, rotated text for optimal space usage
 
-#### Title
+#### 5. Title
 - **Format**: "Wikipedia Data: [Column Name]"
 - **Position**: Top center of the graph
 - **Styling**: 20pt font
 
 ### Visual Layout
 ```
-                    Wikipedia Data: Height
-                    
-Height              [Graph Area with Grid]
-(meters)            • Data points
-(rotated 90°)       • Connected lines
-                    • Y-axis scale numbers
-                    • X-axis index numbers
-                    
-                    Record Number
+                    Wikipedia Data: Height              ┌─────────────┐
+                                                        │ Statistics: │
+                                                        │ Count: 29   │
+Height              [Graph Area with Grid]              │ Min: 1.50   │
+(meters)               2.09    •                        │ Max: 2.09   │
+(rotated 90°)            1.85 • • •                     │ Avg: 1.83   │
+                      1.50 • • •                        └─────────────┘
+                    • Y-axis scale (1.50-2.09)          ┌─────────────┐
+                    • X-axis indices (1-29)             │ Legend:     │
+                    • Data values above points          │ ─── Line    │
+                                                        │ ●   Point   │
+                    Record Number                       └─────────────┘
 ```
 
 ### Implementation Example
@@ -540,19 +566,37 @@ This challenge demonstrated:
 ## 📸 Output Example
 
 The generated graphs include:
-- Title at the top (e.g., "Wikipedia Data: Height")
-- Y-axis label on the left (e.g., "Height (meters)") - rotated 90 degrees
-- X-axis label at the bottom (e.g., "Record Number")
-- Numeric scale on Y-axis
-- Index numbers on X-axis
-- Grid for reference
-- Data points connected with lines
+- **Title** at the top (e.g., "Wikipedia Data: Height") - 20pt
+- **Y-axis label** on the left (e.g., "Height (meters)") - rotated 90 degrees, 14pt
+- **X-axis label** at the bottom (e.g., "Record Number") - 14pt
+- **Statistics box** (top right) with Count, Min, Max, Average
+- **Legend box** (below statistics) explaining line and points
+- **Data point values** displayed above each point (smart spacing)
+- **Numeric scale** on Y-axis with 6 reference points
+- **Index numbers** on X-axis with smart spacing
+- **Grid lines** (10x10) for reference
+- **Data points** (red circles) connected with **lines** (blue)
 
-### Sample Output
+### Sample Outputs
+
+#### Basic Graph (with labels)
 - **Location**: `storage/app/test_graph_with_labels.png`
 - **Size**: 12KB
+- **Features**: Title, axes, labels, grid, line, points
+
+#### Detailed Graph (enhanced)
+- **Location**: `storage/app/detailed_graph.png`
+- **Size**: 15.6KB
+- **Features**: All basic + statistics box + legend + data values
+- **Data points**: 29 records
+- **Statistics**: Min 1.50m, Max 2.09m, Avg 1.83m
+
+### Common Specifications
 - **Dimensions**: 800x600 pixels
 - **Format**: PNG with RGBA color
+- **Background**: White with gray grid
+- **Line color**: Blue (#2563eb)
+- **Point color**: Red (#dc2626)
 
 ---
 

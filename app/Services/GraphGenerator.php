@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\ImageInterface;
 
 /**
  * GraphGenerator Service
@@ -70,6 +71,9 @@ class GraphGenerator
             $this->drawData($image, $data);
             $this->drawLabels($image, $data);
             $this->drawAxisLabels($image, $xAxisLabel, $yAxisLabel);
+            $this->drawStatistics($image, $data);
+            $this->drawLegend($image);
+            $this->drawDataPointValues($image, $data);
 
             // Save the image
             $image->save($outputPath);
@@ -83,9 +87,9 @@ class GraphGenerator
     /**
      * Draw grid lines on the graph
      *
-     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  ImageInterface  $image
      */
-    private function drawGrid($image): void
+    private function drawGrid(ImageInterface $image): void
     {
         $plotWidth = self::WIDTH - (2 * self::PADDING);
         $plotHeight = self::HEIGHT - (2 * self::PADDING);
@@ -116,9 +120,9 @@ class GraphGenerator
     /**
      * Draw X and Y axes
      *
-     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  ImageInterface  $image
      */
-    private function drawAxes($image): void
+    private function drawAxes(ImageInterface $image): void
     {
         $plotWidth = self::WIDTH - (2 * self::PADDING);
         $plotHeight = self::HEIGHT - (2 * self::PADDING);
@@ -143,7 +147,7 @@ class GraphGenerator
     /**
      * Draw the title of the graph
      *
-     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  ImageInterface  $image
      */
     private function drawTitle($image, string $title): void
     {
@@ -159,7 +163,7 @@ class GraphGenerator
     /**
      * Draw the data points and lines
      *
-     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  ImageInterface  $image
      * @param  array<int, float|int>  $data
      */
     private function drawData($image, array $data): void
@@ -213,7 +217,7 @@ class GraphGenerator
     /**
      * Draw axis labels
      *
-     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  ImageInterface  $image
      * @param  array<int, float|int>  $data
      */
     private function drawLabels($image, array $data): void
@@ -258,11 +262,11 @@ class GraphGenerator
     /**
      * Draw axis labels (X and Y axis descriptions)
      *
-     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  ImageInterface  $image
      * @param  string  $xAxisLabel  Label for X-axis
      * @param  string  $yAxisLabel  Label for Y-axis
      */
-    private function drawAxisLabels($image, string $xAxisLabel, string $yAxisLabel): void
+    private function drawAxisLabels(ImageInterface $image, string $xAxisLabel, string $yAxisLabel): void
     {
         // X-axis label (centered at bottom)
         $image->text($xAxisLabel, self::WIDTH / 2, self::HEIGHT - 15, function ($font) {
@@ -282,5 +286,165 @@ class GraphGenerator
             $font->valign('middle');
             $font->angle(90);
         });
+    }
+
+    /**
+     * Draw statistics box with min, max, average, and count
+     *
+     * @param  ImageInterface  $image
+     * @param  array<int, float|int>  $data
+     */
+    private function drawStatistics($image, array $data): void
+    {
+        if (empty($data)) {
+            return;
+        }
+
+        $min = min($data);
+        $max = max($data);
+        $avg = array_sum($data) / count($data);
+        $count = count($data);
+
+        // Statistics box position (top right)
+        $boxX = self::WIDTH - 150;
+        $boxY = 50;
+
+        // Draw semi-transparent background box
+        $image->drawRectangle($boxX, $boxY, function ($rectangle) {
+            $boxHeight = 90;
+            $boxWidth = 140;
+            $rectangle->size($boxWidth, $boxHeight);
+            $rectangle->background('rgba(255, 255, 255, 0.9)');
+            $rectangle->border('#cccccc', 1);
+        });
+
+        // Draw statistics text
+        $statsText = [
+            'Statistics:',
+            'Count: '.$count,
+            'Min: '.number_format($min, 2),
+            'Max: '.number_format($max, 2),
+            'Avg: '.number_format($avg, 2),
+        ];
+
+        $lineHeight = 16;
+        foreach ($statsText as $index => $text) {
+            $y = $boxY + 10 + ($index * $lineHeight);
+            $fontSize = $index === 0 ? 11 : 10;
+            $fontWeight = $index === 0;
+
+            $image->text($text, $boxX + 10, $y, function ($font) use ($fontSize) {
+                $font->size($fontSize);
+                $font->color(self::AXIS_COLOR);
+                $font->align('left');
+                $font->valign('top');
+            });
+        }
+    }
+
+    /**
+     * Draw legend explaining the graph elements
+     *
+     * @param  ImageInterface  $image
+     */
+    private function drawLegend(ImageInterface $image): void
+    {
+        // Legend position (top right, below statistics)
+        $boxX = self::WIDTH - 150;
+        $boxY = 150;
+
+        // Draw semi-transparent background box
+        $image->drawRectangle($boxX, $boxY, function ($rectangle) {
+            $boxHeight = 60;
+            $boxWidth = 140;
+            $rectangle->size($boxWidth, $boxHeight);
+            $rectangle->background('rgba(255, 255, 255, 0.9)');
+            $rectangle->border('#cccccc', 1);
+        });
+
+        // Draw legend title
+        $image->text('Legend:', $boxX + 10, $boxY + 10, function ($font) {
+            $font->size(11);
+            $font->color(self::AXIS_COLOR);
+            $font->align('left');
+            $font->valign('top');
+        });
+
+        // Draw line sample
+        $lineY = $boxY + 32;
+        $image->drawLine(function ($line) use ($boxX, $lineY) {
+            $line->from($boxX + 10, $lineY);
+            $line->to($boxX + 35, $lineY);
+            $line->color(self::LINE_COLOR);
+            $line->width(3);
+        });
+        $image->text('Data Line', $boxX + 40, $lineY - 5, function ($font) {
+            $font->size(10);
+            $font->color(self::AXIS_COLOR);
+            $font->align('left');
+            $font->valign('top');
+        });
+
+        // Draw point sample
+        $pointY = $boxY + 48;
+        $image->drawCircle($boxX + 22, $pointY, function ($circle) {
+            $circle->radius(5);
+            $circle->background(self::POINT_COLOR);
+            $circle->border(self::BACKGROUND_COLOR, 2);
+        });
+        $image->text('Data Point', $boxX + 40, $pointY - 5, function ($font) {
+            $font->size(10);
+            $font->color(self::AXIS_COLOR);
+            $font->align('left');
+            $font->valign('top');
+        });
+    }
+
+    /**
+     * Draw values next to data points for better clarity
+     *
+     * @param  ImageInterface  $image
+     * @param  array<int, float|int>  $data
+     */
+    private function drawDataPointValues(ImageInterface $image, array $data): void
+    {
+        if (empty($data)) {
+            return;
+        }
+
+        $plotWidth = self::WIDTH - (2 * self::PADDING);
+        $plotHeight = self::HEIGHT - (2 * self::PADDING);
+
+        $count = count($data);
+        $min = min($data);
+        $max = max($data);
+        $range = $max - $min;
+
+        if ($range == 0) {
+            $range = 1;
+        }
+
+        // Only show values for a subset of points if there are too many
+        $showValueEvery = max(1, floor($count / 10));
+
+        for ($i = 0; $i < $count; $i++) {
+            // Only show values for every nth point to avoid crowding
+            if ($i % $showValueEvery !== 0) {
+                continue;
+            }
+
+            $x = self::PADDING + ($plotWidth / max(1, $count - 1)) * $i;
+            $normalizedValue = ($data[$i] - $min) / $range;
+            $y = self::PADDING + $plotHeight - ($normalizedValue * $plotHeight);
+
+            // Draw value above the point
+            $valueText = number_format($data[$i], 2);
+            $image->text($valueText, (int) $x, (int) $y - 15, function ($font) {
+                $font->size(9);
+                $font->color('#666666');
+                $font->align('center');
+                $font->valign('bottom');
+            });
+        }
     }
 }

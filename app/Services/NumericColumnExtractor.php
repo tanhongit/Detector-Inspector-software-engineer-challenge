@@ -94,7 +94,7 @@ class NumericColumnExtractor
         // Remove common non-numeric characters but keep decimal points and negative signs
         $cleaned = preg_replace('/[^\d.\-]/', '', $value);
 
-        return $cleaned !== null && $cleaned !== '' && is_numeric($cleaned);
+        return $cleaned !== '' && is_numeric($cleaned);
     }
 
     /**
@@ -108,7 +108,7 @@ class NumericColumnExtractor
         // Remove common non-numeric characters (commas, spaces, etc.)
         $cleaned = preg_replace('/[^\d.\-]/', '', $value);
 
-        if ($cleaned !== null && $cleaned !== '' && is_numeric($cleaned)) {
+        if ($cleaned !== '' && is_numeric($cleaned)) {
             return (float) $cleaned;
         }
 
