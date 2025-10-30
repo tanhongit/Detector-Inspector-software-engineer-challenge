@@ -163,7 +163,7 @@ class GraphGenerator
         if ($count === 0) {
             return;
         }
-        
+
         $min = min($data);
         $max = max($data);
         $range = $max - $min;
@@ -213,7 +213,7 @@ class GraphGenerator
         if (empty($data)) {
             return;
         }
-        
+
         $plotHeight = self::HEIGHT - (2 * self::PADDING);
         $min = min($data);
         $max = max($data);
