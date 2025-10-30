@@ -34,10 +34,17 @@ class GraphGenerator
      * @param  array<int, float|int>  $data  Array of numeric values to plot
      * @param  string  $outputPath  Path where the image should be saved
      * @param  string  $title  Optional title for the graph
+     * @param  string  $xAxisLabel  Label for X-axis (horizontal)
+     * @param  string  $yAxisLabel  Label for Y-axis (vertical)
      * @return bool True if successful, false otherwise
      */
-    public function generateGraph(array $data, string $outputPath, string $title = 'Numeric Data Visualization'): bool
-    {
+    public function generateGraph(
+        array $data,
+        string $outputPath,
+        string $title = 'Numeric Data Visualization',
+        string $xAxisLabel = 'Index',
+        string $yAxisLabel = 'Value'
+    ): bool {
         // Validate input
         if (empty($data)) {
             return false;
@@ -62,6 +69,7 @@ class GraphGenerator
             $this->drawTitle($image, $title);
             $this->drawData($image, $data);
             $this->drawLabels($image, $data);
+            $this->drawAxisLabels($image, $xAxisLabel, $yAxisLabel);
 
             // Save the image
             $image->save($outputPath);
@@ -245,5 +253,34 @@ class GraphGenerator
                 $font->valign('top');
             });
         }
+    }
+
+    /**
+     * Draw axis labels (X and Y axis descriptions)
+     *
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
+     * @param  string  $xAxisLabel  Label for X-axis
+     * @param  string  $yAxisLabel  Label for Y-axis
+     */
+    private function drawAxisLabels($image, string $xAxisLabel, string $yAxisLabel): void
+    {
+        // X-axis label (centered at bottom)
+        $image->text($xAxisLabel, self::WIDTH / 2, self::HEIGHT - 15, function ($font) {
+            $font->size(14);
+            $font->color(self::AXIS_COLOR);
+            $font->align('center');
+            $font->valign('bottom');
+        });
+
+        // Y-axis label (rotated vertically on the left)
+        // Since Intervention Image doesn't support text rotation easily,
+        // we'll place it vertically at the left side
+        $image->text($yAxisLabel, 15, self::HEIGHT / 2, function ($font) {
+            $font->size(14);
+            $font->color(self::AXIS_COLOR);
+            $font->align('center');
+            $font->valign('middle');
+            $font->angle(90);
+        });
     }
 }

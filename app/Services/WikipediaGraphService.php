@@ -16,6 +16,8 @@ class WikipediaGraphService
 
     /**
      * @return array{path: string, url: string, full_path: string, columns: array<int, int>, table_info: array{rows: int, columns: int}}
+     *
+     * @throws \Exception
      */
     public function generateGraph(string $url): array
     {
@@ -26,11 +28,21 @@ class WikipediaGraphService
             throw new \Exception('No tables found on the Wikipedia page.');
         }
 
-        $firstTable = $tables[0];
-        $numericColumns = $this->extractor->identifyNumericColumns($firstTable);
+        $selectedTable = null;
+        $numericColumns = [];
 
-        if (empty($numericColumns)) {
-            throw new \Exception('No numeric columns found in the first table.');
+        foreach ($tables as $table) {
+            $columns = $this->extractor->identifyNumericColumns($table);
+            if (! empty($columns)) {
+                $selectedTable = $table;
+                $numericColumns = $columns;
+
+                break;
+            }
+        }
+
+        if ($selectedTable === null || empty($numericColumns)) {
+            throw new \Exception('No tables with numeric columns found on the Wikipedia page.');
         }
 
         $outputPath = 'graphs/'.uniqid('graph_', true).'.png';
@@ -41,15 +53,19 @@ class WikipediaGraphService
             mkdir($directory, 0755, true);
         }
 
-        $columnIndex = array_key_first($numericColumns);
-        if ($columnIndex === null) {
-            throw new \Exception('No numeric columns available.');
-        }
+        $columnIndex = $numericColumns[0];
+        $values = $this->extractor->extractColumnValues($selectedTable, $columnIndex);
+        $columnName = $selectedTable[0][$columnIndex] ?? 'Numeric Column';
+        $title = 'Wikipedia Data: '.$columnName;
 
-        $values = $this->extractor->extractColumnValues($firstTable, $columnIndex);
-        $title = $firstTable[0][$columnIndex] ?? 'Graph';
-
-        $this->generator->generateGraph($values, $fullPath, $title);
+        // Use column name as Y-axis label and "Record #" as X-axis label
+        $this->generator->generateGraph(
+            $values,
+            $fullPath,
+            $title,
+            'Record Number',
+            $columnName
+        );
 
         return [
             'path' => $outputPath,
@@ -57,8 +73,8 @@ class WikipediaGraphService
             'full_path' => $fullPath,
             'columns' => $numericColumns,
             'table_info' => [
-                'rows' => count($firstTable),
-                'columns' => count($firstTable[0] ?? []),
+                'rows' => count($selectedTable),
+                'columns' => count($selectedTable[0] ?? []),
             ],
         ];
     }
